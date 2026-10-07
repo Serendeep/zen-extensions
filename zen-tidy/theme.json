@@ -8,8 +8,25 @@
   "js": true,
   "author": "Serendeep",
   "version": "0.1.0",
-  "tags": ["sine", "tabs", "folders", "tidy", "JavaScript"],
+  "tags": [
+    "sine",
+    "tabs",
+    "folders",
+    "tidy",
+    "JavaScript"
+  ],
   "createdAt": "2026-10-07",
   "updatedAt": "2026-10-07",
-  "fork": ["zen"]
+  "fork": [
+    "zen"
+  ],
+  "scripts": {
+    "zen-tidy/zen-tidy.uc.mjs": {
+      "name": "Zen Tidy",
+      "description": "Tidy shortcut, preview, apply and undo.",
+      "include": [
+        "chrome://browser/content/browser.xhtml"
+      ]
+    }
+  }
 }
