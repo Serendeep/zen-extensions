@@ -2,7 +2,7 @@
   "id": "zen-tidy",
   "name": "Zen Tidy",
   "description": "One keypress (Alt+Shift+T) tidies loose tabs into named Zen folders. Rules first, then Firefox's on-device AI. Preview before anything moves, full undo, no API key.",
-  "homepage": "https://github.com/Serendeep/zen-extensions",
+  "homepage": "https://github.com/Serendeep/zen-extensions/tree/main/zen-tidy",
   "preferences": "preferences.json",
   "readme": "README.md",
   "js": true,
