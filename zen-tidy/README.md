@@ -19,7 +19,7 @@ Press **Alt+Shift+T** and your loose tabs become a few named, collapsed Zen fold
 Zen Tidy is a JavaScript mod, so it needs [Sine](https://github.com/CosmoCreeper/Sine) (Zen's built-in mod store only runs CSS mods).
 
 1. Install Sine and restart Zen.
-2. In Sine, install from `Serendeep/zen-extensions/zen-tidy`.
+2. In Sine, paste `Serendeep/zen-extensions/tree/main/zen-tidy` into the install box (the `tree/main/` part is needed for a mod in a subfolder).
 3. Restart Zen.
 
 ## First run
