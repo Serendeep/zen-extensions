@@ -221,3 +221,17 @@ test("parseShortcut matches exact modifiers only", async () => {
   assert.equal(parseShortcut("Hyper+T"), null);
   assert.equal(parseShortcut(""), null);
 });
+
+test("chooseLabel replaces generic model names with the shared site or a real title word", async () => {
+  const { chooseLabel, isGenericLabel } = await import("../core.mjs");
+  const t = (title, url) => ({ title, url });
+  assert.equal(chooseLabel("Rust Programming", [t("a", "https://x.com")]), "Rust Programming");
+  assert.equal(isGenericLabel("Sign In"), true);
+  assert.equal(isGenericLabel("Signs"), true);
+  assert.equal(isGenericLabel("Rust"), false);
+  const logins = [t("Sign in - Google Accounts", "https://accounts.google.com/a"), t("Sign in", "https://accounts.google.com/b"), t("Login", "https://github.com/login")];
+  assert.equal(chooseLabel("Signs", logins), "Google");
+  const mixed = [t("Sign in to Linear", "https://linear.app/login"), t("Linear issues", "https://a.com"), t("Sign in", "https://b.org")];
+  assert.equal(chooseLabel("", mixed), "Linear");
+  assert.equal(chooseLabel("Login", [t("Sign in", "not a url")]), "Group");
+});

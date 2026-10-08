@@ -150,12 +150,47 @@ export function buildProposals(input) {
   return proposals;
 }
 
-/** Fallback label when no model label exists: most common title word. */
+// Words that say nothing about a tab's topic (login pages, chrome, placeholders).
+const GENERIC_WORDS = new Set([
+  "sign", "signs", "signin", "signup", "in", "up", "login", "logins", "log", "logon", "account", "accounts",
+  "home", "homepage", "page", "pages", "untitled", "tab", "tabs", "welcome", "loading", "error",
+  "group", "groups", "null", "undefined",
+]);
+
+export const isGenericLabel = label => tokenize(label ?? "").every(w => GENERIC_WORDS.has(w));
+
+/** Fallback label when no model label exists: most common meaningful title word. */
 export function tokenLabel(titles) {
   const counts = new Map();
-  for (const t of titles) for (const w of new Set(tokenize(t))) counts.set(w, (counts.get(w) ?? 0) + 1);
+  for (const t of titles) {
+    for (const w of new Set(tokenize(t))) if (!GENERIC_WORDS.has(w) && w.length > 1) counts.set(w, (counts.get(w) ?? 0) + 1);
+  }
   const [word] = [...counts].sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]))[0] ?? ["Group"];
   return word[0].toUpperCase() + word.slice(1);
+}
+
+/** "accounts.google.com" -> "Google"; site name without subdomain or TLD. */
+function siteName(domain) {
+  const parts = domain.split(".");
+  const name = parts.length >= 2 ? parts.at(-2) : parts[0];
+  return name ? name[0].toUpperCase() + name.slice(1) : "";
+}
+
+/**
+ * Model label if it means something; otherwise the shared site when most tabs come
+ * from one, otherwise the most common meaningful title word.
+ * @param {string} modelLabel @param {{ title: string, url: string }[]} tabs
+ */
+export function chooseLabel(modelLabel, tabs) {
+  if (modelLabel && !isGenericLabel(modelLabel)) return modelLabel;
+  const counts = new Map();
+  for (const t of tabs) {
+    const name = siteName(domainOf(t.url));
+    if (name) counts.set(name, (counts.get(name) ?? 0) + 1);
+  }
+  const [top, n] = [...counts].sort((a, b) => b[1] - a[1])[0] ?? [];
+  if (top && n * 2 > tabs.length) return top;
+  return tokenLabel(tabs.map(t => t.title));
 }
 
 const sameState = (a, b) =>

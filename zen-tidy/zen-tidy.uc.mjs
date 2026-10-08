@@ -1,7 +1,7 @@
 // Zen Tidy browser glue. All decisions live in core.mjs; this file reads Zen state,
 // renders the preview, and executes plans.
 import {
-  DEFAULTS, BUILT_IN_BUCKETS, matchExistingFolders, bucketByRules, buildProposals, tokenLabel,
+  DEFAULTS, BUILT_IN_BUCKETS, matchExistingFolders, bucketByRules, buildProposals, chooseLabel,
   recheck, planRestore, residue, applyWithRollback, withTimeout, checkCapabilities, mlGate,
   disableAiPlan, createRunGuard, resolveUnsorted, withUnsorted, parseRules, parseShortcut,
 } from "./core.mjs";
@@ -110,7 +110,8 @@ async function runAi(tabs, threshold) {
   for (const g of groups) {
     // generateGroupLabels only names the first cluster; name each group separately.
     const label = await mgr.getPredictedLabelForGroup(g.tabs, tabs.filter(t => !g.tabs.includes(t)));
-    clusters.push({ label: label || tokenLabel(g.tabs.map(t => t.label)), tabIds: g.tabs.map(tabId) });
+    const info = g.tabs.map(t => ({ title: t.label, url: t.linkedBrowser?.currentURI?.spec ?? "" }));
+    clusters.push({ label: chooseLabel(label, info), tabIds: g.tabs.map(tabId) });
   }
   return clusters;
 }
